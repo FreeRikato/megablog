@@ -1,0 +1,73 @@
+{
+	"compilerOptions": {
+		// ESM
+
+		// Typescript emits pure ESM output (using import/export). Avoids CommonJS issues (require, module.exports)
+		"module": "ESNext",
+		/* 
+      Tells typescript to resolve imports the same way bundlers (esbuild, vite, tsx) do. 
+      Changes how TS handles:
+      - extensionless imports
+      - TS/JS resolution
+      - alias paths
+      - node_modules resolution
+
+      Official recommendation for ESM + bundler projects. Fixes issues like:
+      - TS complaining about missing .js extensions
+      - TS incorrectly rewriting imports
+    */
+		"moduleResolution": "Bundler",
+		"lib": ["ESNext"],
+
+		// Output
+
+		// rootDir is only relevant when emitting files with tsc and not esbuild
+		// Typescript would emit compiled JS if tsc is used for type checks (OPTIONAL)
+		"outDir": "./dist",
+		// Specifies the JavaScript language features TS will compile down for type checking (Also, "ES2022" or "ES2023" could be used"
+		// NOTE: With bundlers, this does not control actual output - esbuild does that via "node22" as target
+		"target": "ESNext",
+		"incremental": true, // Speeds up subsequent type checks
+		"tsBuildInfoFile": "./node_modules/.cache/tsbuildinfo",
+		"noEmit": true, // esbuild handles emission, tsc only checks types
+
+		// Strictness
+
+		"strict": true, // Enables all major strictness rules
+		"noUncheckedIndexedAccess": true, // Makes indexing safer to avoid runtime crash
+		"noUnusedLocals": true, // Errors when a variable is not used
+		"noUnusedParameters": true, // Errors when parameters is not used
+		"skipLibCheck": true, // Skips checking types inside node_modules
+
+		// Extensionless imports
+		/* 
+      Instructs typescript not to rewrite or transform import/export syntax in any way
+      - TS will not add extensions
+      - TS will not convert ESM -> CommonJS or vice versa
+      - Import lines are literally passed onto esbuild
+    */
+		"verbatimModuleSyntax": true,
+		"allowImportingTsExtensions": false, // Bundlers resolve extensionless imports
+
+		// Path alias (src as root)
+		"baseUrl": "./src",
+		"paths": {
+			"@/*": ["*"]
+		},
+
+		// JSON imports
+		"resolveJsonModule": true,
+
+		/*
+    Instructs typescript that every file in the project must be compilable in isolation, without relying on information from other files. This matters for modern transpilers (esbuild, swc, tsx) as they do not -
+    - Run full type analysis
+    - Check type relationships across files
+    - Generate metadata that depends on other files
+
+    */
+		"isolatedModules": true
+	},
+	// Include your source folder only
+	"include": ["src"],
+	"exclude": ["node_modules", "dist"]
+}
